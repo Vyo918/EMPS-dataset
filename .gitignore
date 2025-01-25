@@ -1,11 +1,6 @@
-model1/finding/
-model1/full_dataset/
-model1/no_bg/
-model1/split_backup/
-model1/improved_backup/
-model2/FashionStyle14/
-model2/finding/
-model2/full_dataset/
-model2/deleted_files_log.txt
-model2/duplicate_images_report.txt
+model1/*
+!model1/split/
+!model1/improved/
+model2/*
+!model2/split/
 script/
