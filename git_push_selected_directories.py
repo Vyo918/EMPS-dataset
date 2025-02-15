@@ -17,74 +17,58 @@ def has_changes_to_commit(directory):
     result = subprocess.run(f"git status {directory} --porcelain", shell=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     return bool(result.stdout.strip())
 
-paths = ["model1/split/", "model1/improved/"]
+def acp(final_path):
+    print(f"Processing directory: {final_path}")
+                    
+    if not os.path.isdir(final_path):
+        print(f"Directory {final_path} does not exist. Skipping.")
+        return
+    
+    if not has_changes_to_commit(final_path):
+        print(f"No changes to commit in {final_path}. Skipping.")
+        return
+    
+    # Stage changes in the directory
+    if not run_git_command(f"git add {final_path}"):
+        print(f"Failed to stage changes in {final_path}. Skipping.")
+        return
+
+    # Commit the changes with a generic message
+    if not run_git_command(f'git commit -m "Auto-commit add directory: {final_path}"'):
+        print(f"Failed to commit changes in {final_path}. Skipping.")
+        return
+
+    # Push the changes to the remote repository
+    if not run_git_command(f"git push origin main"):
+        print(f"Failed to push changes for {final_path}. Skipping.")
+        return
+
+    print(f"Pushed changes for {final_path}")
+
+paths = ["model1/split/", "model1/improved/", "model2/split/"]
 dirs = ["test", "val", "train"]
 big_categories = os.listdir("./model1/improved")
-categories = os.listdir("./model1/full_dataset")
-categories += ["bottom", "dress", "footwear", "top"]
+categories1 = os.listdir("./model1/full_dataset")
+categories1 += ["bottom", "dress", "footwear", "top"]
+categories2 = os.listdir("./model2/full_dataset")
 
 for path in paths:
+    if path.split("/")[0] == "model1":
+        categories = categories1
+    else:
+        categories = categories2
+
     if path == "model1/improved/":
         for big_category in big_categories:
             for dir in dirs:
                 for category in categories:
                     final_path = os.path.join(path, big_category, dir, category)
-                    print(f"Processing directory: {final_path}")
+                    acp(final_path)
                     
-                    if not os.path.isdir(final_path):
-                        print(f"Directory {final_path} does not exist. Skipping.")
-                        continue
-                    
-                    if not has_changes_to_commit(final_path):
-                        print(f"No changes to commit in {final_path}. Skipping.")
-                        continue
-                    
-                    # Stage changes in the directory
-                    if not run_git_command(f"git add {final_path}"):
-                        print(f"Failed to stage changes in {final_path}. Skipping.")
-                        continue
-
-                    # Commit the changes with a generic message
-                    if not run_git_command(f'git commit -m "Auto-commit add directory: {final_path}"'):
-                        print(f"Failed to commit changes in {final_path}. Skipping.")
-                        continue
-
-                    # Push the changes to the remote repository
-                    if not run_git_command(f"git push origin main"):
-                        print(f"Failed to push changes for {final_path}. Skipping.")
-                        continue
-
-                    print(f"Pushed changes for {final_path}")
     else:
         for dir in dirs:
             for category in categories:
                 final_path = os.path.join(path, dir, category)
-                print(f"Processing directory: {final_path}")
-                
-                if not os.path.isdir(final_path):
-                    print(f"Directory {final_path} does not exist. Skipping.")
-                    continue
-                
-                if not has_changes_to_commit(final_path):
-                    print(f"No changes to commit in {final_path}. Skipping.")
-                    continue
-                
-                # Stage changes in the directory
-                if not run_git_command(f"git add {final_path}"):
-                    print(f"Failed to stage changes in {final_path}. Skipping.")
-                    continue
-
-                # Commit the changes with a generic message
-                if not run_git_command(f'git commit -m "Auto-commit add directory: {final_path}"'):
-                    print(f"Failed to commit changes in {final_path}. Skipping.")
-                    continue
-
-                # Push the changes to the remote repository
-                if not run_git_command(f"git push origin main"):
-                    print(f"Failed to push changes for {final_path}. Skipping.")
-                    continue
-
-                print(f"Pushed changes for {final_path}")
-                
+                acp(final_path)
 
 print("All selected directories processed.")
