@@ -45,7 +45,7 @@ def acp(final_path):
 
     print(f"Pushed changes for {final_path}")
 
-paths = ["model1/split/", "model1/improved/", "model2/split/"]
+paths = ["model1/split/", "model1/improved/", "model2/split/", "model1/improved_no_footwear/"]
 dirs = ["test", "val", "train"]
 big_categories = os.listdir("./model1/improved")
 categories1 = os.listdir("./model1/full_dataset")
@@ -58,7 +58,7 @@ for path in paths:
     else:
         categories = categories2
 
-    if path == "model1/improved/":
+    if path == "model1/improved/" or path == "model1/improved_no_footwear/":
         for big_category in big_categories:
             for dir in dirs:
                 for category in categories:
